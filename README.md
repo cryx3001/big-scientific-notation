@@ -1,4 +1,4 @@
-#big-scientific-notation
+## big-scientific-notation
 
 A light library for Node.js to manipulate big numbers written in a scientific notation.
 Support very basic arithmetics operations (+, -, *, /)

@@ -26,8 +26,10 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [
-    "big-numbers",
-    "scientific-notation"
+    "big numbers",
+    "scientific notation",
+    "exponent",
+    "BSN"
   ],
   "author": "Cryx",
   "license": "ISC"
