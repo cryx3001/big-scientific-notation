@@ -1,4 +1,4 @@
-##big-scientific-notation
+#big-scientific-notation
 
 A light library for Node.js to manipulate big numbers written in a scientific notation.
 Support very basic arithmetics operations (+, -, *, /)
@@ -8,9 +8,9 @@ Install
 
 - Examples:
 ```js
-    const BigScientificNotation = require("big-scientific-notation");
-    let a = new BigScientificNotation(123);
-    let b = new BigScientificNotation([1, 1.23, 2]); // [sign, mantissa, exponent] -> 1 * 1.23 * 10^2 = 123
+    const BSN = require("big-scientific-notation");
+    let a = new BSN.BigScientificNotation(123);
+    let b = new BSN.BigScientificNotation([1, 1.23, 2]); // [sign, mantissa, exponent] -> 1 * 1.23 * 10^2 = 123
 
     a.isEqual(b); // true
     a.isEqual(50); // false
