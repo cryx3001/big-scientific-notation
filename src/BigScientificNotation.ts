@@ -1,10 +1,10 @@
 export class BigScientificNotation {
-    private _numSN : numSN = {s: 1, m: 0, e: 0};
+    private readonly _numSN : numSN = {s: 1, m: 0, e: 0};
 
     constructor(x : number)
     constructor(x : Array<number>)
     constructor (x : number | Array<number>) {
-        if (typeof x === "number") { this._numSN = this._convertToScientificNotation(x); }
+        if (typeof x === "number") { this._numSN = BigScientificNotation._convertToScientificNotation(x); }
         if (Array.isArray(x) && x.length >= 3) {
             this._numSN = {
                 s: x[0],
@@ -14,7 +14,7 @@ export class BigScientificNotation {
         }
     }
 
-    private _convertToScientificNotation (x : number) : numSN {
+    private static _convertToScientificNotation (x : number) : numSN {
         if (!isFinite(x)) throw new Error("Given number is too big (Infinity)");
         if (x == 0) { return { s: 0, m: 0, e: 0 }; }
 
@@ -26,24 +26,28 @@ export class BigScientificNotation {
     // -1: numA > numB
     // 0 : numA == numB
     // 1 : numB < numA
-    private _compare (numA: numSN, numB: numSN) : number {
+    private static _compare (numA: numSN, numB: numSN) : number {
         if (numA.s == numB.s) {
             const mA = numA.m * numA.s;
             const mB = numB.m * numB.s;
-            const expComp = this._compareExponent(numA, numB);
+            const expComp = BigScientificNotation._compareExponent(numA, numB);
             if (expComp == 0) { return mA > mB ? -1 : (mA < mB ? 1 : 0); }
             return expComp * numA.s;
         }
         return numA.s > numB.s ? -1 : 1;
     }
 
-    private _compareExponent(numA: numSN, numB: numSN): number{
+    private static _compareExponent(numA: numSN, numB: numSN): number{
         return numA.e > numB.e ? -1 : (numA.e < numB.e ? 1 : 0);
     }
 
+    public getSign() : number {return this._numSN.s;}
+    public getExponent() : number {return this._numSN.e;}
+    public getMantissa() : number {return this._numSN.m;}
+
     public add(numA: BigScientificNotation | number) : BigScientificNotation{
-        const x = typeof numA == "number" ? this._convertToScientificNotation(numA) : numA._numSN;
-        const expComp = this._compareExponent(x, this._numSN);
+        const x = typeof numA == "number" ? BigScientificNotation._convertToScientificNotation(numA) : numA._numSN;
+        const expComp = BigScientificNotation._compareExponent(x, this._numSN);
         let ansM : number;
         if(expComp == -1)
             ansM = x.s*x.m + this._numSN.s*this._numSN.m * 10**(this._numSN.e - x.e);
@@ -70,7 +74,7 @@ export class BigScientificNotation {
     }
 
     public multiply(numA: BigScientificNotation | number) : BigScientificNotation{
-        const x = typeof numA == "number" ? this._convertToScientificNotation(numA) : numA._numSN;
+        const x = typeof numA == "number" ? BigScientificNotation._convertToScientificNotation(numA) : numA._numSN;
         const ansM = x.m * this._numSN.m;
         const numLog = Math.floor(Math.log10(Math.abs(ansM)));
         const isNumLogFinite = isFinite(numLog);
@@ -82,7 +86,7 @@ export class BigScientificNotation {
     }
 
     public divide(numA: BigScientificNotation | number) : BigScientificNotation{
-        const x = typeof numA == "number" ? this._convertToScientificNotation(numA) : numA._numSN;
+        const x = typeof numA == "number" ? BigScientificNotation._convertToScientificNotation(numA) : numA._numSN;
         const ansM = this._numSN.m / x.m ;
         const numLog = Math.floor(Math.log10(Math.abs(ansM)));
         const isNumLogFinite = isFinite(numLog);
@@ -93,20 +97,27 @@ export class BigScientificNotation {
         ]);
     }
 
+    public abs() : BigScientificNotation{
+        return new BigScientificNotation([
+            1,
+            this._numSN.m,
+            this._numSN.e
+        ]);
+    }
 
     public isEqual (numA: BigScientificNotation | number) : boolean {
-        const x = typeof numA == "number" ? this._convertToScientificNotation(numA) : numA._numSN;
-        return this._compare(this._numSN, x) === 0;
+        const x = typeof numA == "number" ? BigScientificNotation._convertToScientificNotation(numA) : numA._numSN;
+        return BigScientificNotation._compare(this._numSN, x) === 0;
     }
 
     public isGreater (numA: BigScientificNotation | number) : boolean {
-        const x = typeof numA == "number" ? this._convertToScientificNotation(numA) : numA._numSN;
-        return this._compare(this._numSN, x) === -1;
+        const x = typeof numA == "number" ? BigScientificNotation._convertToScientificNotation(numA) : numA._numSN;
+        return BigScientificNotation._compare(this._numSN, x) === -1;
     }
 
     public isLess (numA: BigScientificNotation | number) : boolean {
-        const x = typeof numA == "number" ? this._convertToScientificNotation(numA) : numA._numSN;
-        return this._compare(this._numSN, x) === 1;
+        const x = typeof numA == "number" ? BigScientificNotation._convertToScientificNotation(numA) : numA._numSN;
+        return BigScientificNotation._compare(this._numSN, x) === 1;
     }
 
     public toString (maxDecimalDigits? : number) : string {
