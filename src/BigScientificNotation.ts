@@ -25,6 +25,10 @@ export class BigScientificNotation {
         return { s: x >= 0 ? 1 : -1, m: absX / (10 ** numLog), e: numLog };
     }
 
+    public convertToDecimal() : number {
+        return this._numSN.s * this._numSN.m * (10** this._numSN.e);
+    }
+
     // -1: numA > numB
     // 0 : numA == numB
     // 1 : numB < numA
@@ -46,6 +50,26 @@ export class BigScientificNotation {
     public getSign() : number {return this._numSN.s;}
     public getExponent() : number {return this._numSN.e;}
     public getMantissa() : number {return this._numSN.m;}
+
+    public setSign(x : number) : BigScientificNotation {
+        if(x != 1 && x != -1){
+            throw new Error("Invalid arg : must be 1 or -1")
+        }
+        return new BigScientificNotation([x, this._numSN.m, this._numSN.e]);
+    }
+
+    public setExponent(x : number) : BigScientificNotation {
+        return new BigScientificNotation([this._numSN.s, this._numSN.m, x]);
+    }
+
+    public setMantissa(x : number) : BigScientificNotation {
+        const numLog = Math.floor(Math.log10(Math.abs(x)));
+        const isNumLogFinite = isFinite(numLog);
+        return new BigScientificNotation([
+            this._numSN.s,
+            Math.abs(x / (10 ** (isNumLogFinite ? numLog : 0))),
+            isNumLogFinite ? (this._numSN.e + numLog) : 0]);
+    }
 
     public add(numA: BigScientificNotation | number) : BigScientificNotation{
         const x = typeof numA == "number" ? BigScientificNotation._convertToScientificNotation(numA) : numA._numSN;
