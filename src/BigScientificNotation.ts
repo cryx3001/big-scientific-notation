@@ -6,10 +6,12 @@ export class BigScientificNotation {
     constructor (x : number | Array<number>) {
         if (typeof x === "number") { this._numSN = BigScientificNotation._convertToScientificNotation(x); }
         if (Array.isArray(x) && x.length >= 3) {
+            const numLog = Math.floor(Math.log10(Math.abs(x[1])));
+            const isNumLogFinite = isFinite(numLog);
             this._numSN = {
                 s: x[0],
-                m: x[1],
-                e: x[2]
+                m: Math.abs(x[1] / (10 ** (isNumLogFinite ? numLog : 0))),
+                e: isNumLogFinite ? (x[2] + numLog) : 0
             };
         }
     }
