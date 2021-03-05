@@ -1,5 +1,9 @@
 # big-scientific-notation
 
+[![npm version](https://img.shields.io/npm/v/big-scientific-notation.svg)](https://www.npmjs.com/package/big-scientific-notation)
+[![npm downloads](https://img.shields.io/npm/dw/big-scientific-notation)](https://www.npmjs.com/package/big-scientific-notation)
+<br></br>
+
 A light library for Node.js to manipulate big numbers written in a scientific notation.
 Support basic arithmetics operations (+, -, *, /, power, abs)
 
