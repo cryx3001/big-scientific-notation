@@ -53,7 +53,7 @@ export class BigScientificNotation {
 
     public setSign(x : number) : BigScientificNotation {
         if(x != 1 && x != -1){
-            throw new Error("Invalid arg : must be 1 or -1")
+            throw new Error("Invalid arg : must be 1 or -1");
         }
         return new BigScientificNotation([x, this._numSN.m, this._numSN.e]);
     }
@@ -79,7 +79,6 @@ export class BigScientificNotation {
             ansM = x.s*x.m + this._numSN.s*this._numSN.m * 10**(this._numSN.e - x.e);
         else
             ansM = this._numSN.s*this._numSN.m + x.s*x.m * 10**(x.e - this._numSN.e);
-
 
         const numLog = Math.floor(Math.log10(Math.abs(ansM)));
         const isNumLogFinite = isFinite(numLog);
@@ -129,6 +128,26 @@ export class BigScientificNotation {
             this._numSN.m,
             this._numSN.e
         ]);
+    }
+
+    public power(numA: number) : BigScientificNotation {
+        if(numA == 0) return new BigScientificNotation([1, 1, 0]);
+        const signValue = numA >= 0 ? 1 : -1;
+        const ans = new BigScientificNotation([
+            this._numSN.s == -1 ? (Math.abs(numA) % 2 == 0 ? 1 : -1) : this._numSN.s,
+            this._numSN.m,
+            this._numSN.e * numA]);
+        const maxExp = Math.floor(Math.log10(Number.MAX_VALUE));
+        const appliedExp = signValue * (maxExp - 50); // Well, I guess it will works
+        for(let k = Math.abs(numA); k > 0; k -= maxExp - 50){
+            const valueToMultiply = signValue == 1 ? Math.min(appliedExp, k * signValue) : Math.max(appliedExp, k * signValue);
+            const ansM = ans._numSN.m ** valueToMultiply;
+            const numLog = Math.floor(Math.log10(Math.abs(ansM)));
+            const isNumLogFinite = isFinite(numLog);
+            ans._numSN.m = Math.abs(ansM / (10 ** (isNumLogFinite ? numLog : 0)));
+            ans._numSN.e = isNumLogFinite ? (ans._numSN.e + numLog): 0;
+        }
+        return ans;
     }
 
     public isEqual (numA: BigScientificNotation | number) : boolean {
